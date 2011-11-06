@@ -1,3 +1,4 @@
+
 = Active Merchant
 
 This library is supposed to aid in creating e-commerce software in Ruby.
