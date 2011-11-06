@@ -120,6 +120,22 @@ module ActiveMerchant #:nodoc:
           def account
             params['business'] || params['receiver_email']
           end
+          
+          def mc_amount1
+            params['mc_amount1']
+          end
+
+          def mc_amount3
+            params['mc_amount3']
+          end
+
+          def period1
+            params['period1']
+          end
+
+          def period3
+            params['period3']
+          end
 
           # Acknowledge the transaction to paypal. This method has to be called after a new 
           # ipn arrives. Paypal will verify that all the information we received are correct and will return a 
