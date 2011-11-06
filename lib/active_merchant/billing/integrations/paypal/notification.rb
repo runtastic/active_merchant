@@ -97,7 +97,7 @@ module ActiveMerchant #:nodoc:
 
           # What currency have we been dealing with
           def currency
-            params['mc_currency']
+            params['mc_currency'] || params['currency_code']
           end
 
           # This is the item number which we submitted to paypal 
@@ -135,6 +135,18 @@ module ActiveMerchant #:nodoc:
 
           def period3
             params['period3']
+          end
+          
+          def amount_per_cycle
+            params['amount_per_cycle']
+          end
+          
+          def product_name
+            params['product_name']
+          end
+          
+          def payment_cycle
+            params['payment_cycle']
           end
 
           # Acknowledge the transaction to paypal. This method has to be called after a new 
