@@ -148,6 +148,10 @@ module ActiveMerchant #:nodoc:
           def payment_cycle
             params['payment_cycle']
           end
+          
+          def rp_invoice_id
+            params['rp_invoice_id']
+          end
 
           # Acknowledge the transaction to paypal. This method has to be called after a new 
           # ipn arrives. Paypal will verify that all the information we received are correct and will return a 
