@@ -85,7 +85,7 @@ module ActiveMerchant #:nodoc:
                 xml.tag! 'n2:BillingAgreementDescription', options[:description]
               end
               xml.tag! 'n2:PaymentAction', action
-              xml.tag! 'n2:OrderTotal', amount(money).to_f.zero? ? amount(100) : amount(money), 'currencyID' => options[:currency] || currency(money)
+              xml.tag! 'n2:OrderTotal', localized_amount(money, options[:currency]).to_f.zero? ? localized_amount(100, options[:currency]) : localized_amount(money, options[:currency]), 'currencyID' => options[:currency] || currency(money)
               xml.tag! 'n2:AddressOverride', '0'
               xml.tag! 'n2:NoShipping', '1'
               xml.tag! 'n2:ReturnURL', options[:return_url]
@@ -113,14 +113,14 @@ module ActiveMerchant #:nodoc:
               xml.tag! 'n2:Token', options[:token]
               xml.tag! 'n2:PayerID', options[:payer_id]
               xml.tag! 'n2:PaymentDetails' do
-                xml.tag! 'n2:OrderTotal', amount(money), 'currencyID' => currency_code
+                xml.tag! 'n2:OrderTotal', localized_amount(money, currency_code), 'currencyID' => currency_code
 
                 # All of the values must be included together and add up to the order total
                 if [:subtotal, :shipping, :handling, :tax].all?{ |o| options.has_key?(o) }
-                  xml.tag! 'n2:ItemTotal', amount(options[:subtotal]), 'currencyID' => currency_code
-                  xml.tag! 'n2:ShippingTotal', amount(options[:shipping]),'currencyID' => currency_code
-                  xml.tag! 'n2:HandlingTotal', amount(options[:handling]),'currencyID' => currency_code
-                  xml.tag! 'n2:TaxTotal', amount(options[:tax]), 'currencyID' => currency_code
+                  xml.tag! 'n2:ItemTotal', localized_amount(options[:subtotal], currency_code), 'currencyID' => currency_code
+                  xml.tag! 'n2:ShippingTotal', localized_amount(options[:shipping], currency_code),'currencyID' => currency_code
+                  xml.tag! 'n2:HandlingTotal', localized_amount(options[:handling], currency_code),'currencyID' => currency_code
+                  xml.tag! 'n2:TaxTotal', localized_amount(options[:tax], currency_code), 'currencyID' => currency_code
                 end
 
                 xml.tag! 'n2:NotifyURL', options[:notify_url]
@@ -179,20 +179,20 @@ module ActiveMerchant #:nodoc:
                   xml.tag! 'n2:BillingPeriod', options[:period] || 'Month'
                   xml.tag! 'n2:BillingFrequency', options[:frequency]
                   xml.tag! 'n2:TotalBillingCycles', options[:cycles] unless options[:cycles].blank?
-                  xml.tag! 'n2:Amount', amount(options[:amount]), 'currencyID' => options[:currency] || 'USD'
-                  xml.tag! 'n2:TaxAmount', amount(options[:tax_amount] || 0), 'currencyID' => options[:currency] || 'USD'
+                  xml.tag! 'n2:Amount', localized_amount(options[:amount], options[:currency]), 'currencyID' => options[:currency] || 'USD'
+                  xml.tag! 'n2:TaxAmount', localized_amount((options[:tax_amount] || 0), options[:currency]), 'currencyID' => options[:currency] || 'USD'
                 end
                 if !options[:trialamount].blank?
                   xml.tag! 'n2:TrialPeriod' do
                     xml.tag! 'n2:BillingPeriod', options[:trialperiod] || 'Month'
                     xml.tag! 'n2:BillingFrequency', options[:trialfrequency]
                     xml.tag! 'n2:TotalBillingCycles', options[:trialcycles] || 1
-                    xml.tag! 'n2:Amount', amount(options[:trialamount]), 'currencyID' => options[:currency] || 'USD'
+                    xml.tag! 'n2:Amount', localized_amount(options[:trialamount], options[:currency]), 'currencyID' => options[:currency] || 'USD'
                   end
                 end
                 if !options[:initial_amount].blank?
                   xml.tag! 'n2:ActivationDetails' do
-                    xml.tag! 'n2:InitialAmount', amount(options[:initial_amount]), 'currencyID' => options[:currency] || 'USD'
+                    xml.tag! 'n2:InitialAmount', localized_amount(options[:initial_amount], options[:currency]), 'currencyID' => options[:currency] || 'USD'
                     xml.tag! 'n2:FailedInitialAmountAction', options[:continue_on_failure] ? 'ContinueOnFailure' : 'CancelOnFailure'
                   end
                 end
@@ -234,10 +234,10 @@ module ActiveMerchant #:nodoc:
               xml.tag! 'n2:MaxFailedPayments', options[:max_failed_payments] unless options[:max_failed_payments].blank?
               xml.tag! 'n2:AutoBillOutstandingAmount', options[:auto_bill_outstanding] ? 'AddToNextBilling' : 'NoAutoBill'
               if options.has_key?(:amount)
-                xml.tag! 'n2:Amount', amount(options[:amount]), 'currencyID' => options[:currency] || 'USD'
+                xml.tag! 'n2:Amount', localized_amount(options[:amount], options[:currency]), 'currencyID' => options[:currency] || 'USD'
               end
               if options.has_key?(:tax_amount)
-                xml.tag! 'n2:TaxAmount', amount(options[:tax_amount] || 0), 'currencyID' => options[:currency] || 'USD'
+                xml.tag! 'n2:TaxAmount', localized_amount((options[:tax_amount] || 0), options[:currency]), 'currencyID' => options[:currency] || 'USD'
               end
               if options.has_key?(:start_date)
                 xml.tag! 'n2:BillingStartDate', (options[:start_date].is_a?(Date) ? options[:start_date].to_time : options[:start_date]).utc.iso8601
@@ -272,7 +272,7 @@ module ActiveMerchant #:nodoc:
             xml.tag! 'n2:Version', API_VERSION
             xml.tag! 'ProfileID', profile_id
             if options.has_key?(:amount)
-              xml.tag! 'n2:Amount', amount(options[:amount]), 'currencyID' => options[:currency] || 'USD'
+              xml.tag! 'n2:Amount', localized_amount(options[:amount], options[:currency]), 'currencyID' => options[:currency] || 'USD'
             end
             xml.tag! 'n2:Note', options[:note] unless options[:note].blank?
           end
