@@ -105,8 +105,8 @@ module ActiveMerchant #:nodoc:
         commit 'DoVoid', build_void_request(authorization, options)
       end
       
-      def refund(money, identification, options = {})
-        commit 'RefundTransaction', build_refund_request(money, identification, options)
+      def refund(identification, options = {})
+        commit 'RefundTransaction', build_refund_request(identification, options)
       end
 
       def credit(money, identification, options = {})
@@ -146,7 +146,7 @@ module ActiveMerchant #:nodoc:
         xml.target!        
       end
       
-      def build_refund_request(money, identification, options)
+      def build_refund_request(identification, options)
         xml = Builder::XmlMarkup.new
             
         xml.tag! 'RefundTransactionReq', 'xmlns' => PAYPAL_NAMESPACE do
