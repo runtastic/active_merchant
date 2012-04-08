@@ -153,8 +153,7 @@ module ActiveMerchant #:nodoc:
           xml.tag! 'RefundTransactionRequest', 'xmlns:n2' => EBAY_NAMESPACE do
             xml.tag! 'n2:Version', API_VERSION
             xml.tag! 'TransactionID', identification
-            xml.tag! 'Amount', amount(money), 'currencyID' => options[:currency] || currency(money)
-            xml.tag! 'RefundType', 'Partial'
+            xml.tag! 'RefundType', 'Full'
             xml.tag! 'Memo', options[:note] unless options[:note].blank?
           end
         end
